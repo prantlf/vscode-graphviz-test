@@ -22,22 +22,24 @@ function activate(context) {
 		// The code you place here will be executed every time your command is executed
 
 		// Display a message box to the user
-		const svg = await renderGraphFromSource({ input: `
-			digraph "Example" {
-				graph [ label = "Example" ];
-				node [ color = "blue", shape =Mdiamond ];
-				edge [ color = "red", label = "Say" ];
-				"Hello";
-				"World";
-				"Hello" -> "World";
-			}
-		` }, { format: 'svg' });
+		const input = `
+		digraph "Example" {
+			graph [ label = "Example" ];
+			node [ color = "blue", shape =Mdiamond ];
+			edge [ color = "red", label = "Say" ];
+			"Hello";
+			"World";
+			"Hello" -> "World";
+		}`;
+		const svg = await renderGraphFromSource({ input }, { format: 'svg' });
 		console.log(svg);
 		const excerpt = svg.indexOf('<g');
 		vscode.window.showInformationMessage(`${svg.substring(excerpt, excerpt + 100)}...
 
 See the console for the complete SVG output.`);
-	});
+		const png = await renderGraphFromSource({ input }, { format: 'svg' });
+		console.log('PNG size:', png.length);
+});
 
 	context.subscriptions.push(disposable);
 }
