@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { renderGraphFromSource } from 'graphviz-cli';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -13,10 +14,24 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('test-graphviz.helloWorld', () => {
+	let disposable = vscode.commands.registerCommand('test-graphviz.helloWorld', async () => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Test Graphviz!');
+		const svg = await renderGraphFromSource({ input: `
+			digraph "Example" {
+				graph [ label = "Example" ];
+				node [ color = "blue", shape =Mdiamond ];
+				edge [ color = "red", label = "Say" ];
+				"Hello";
+				"World";
+				"Hello" -> "World";
+			}
+		` }, { format: 'svg' });
+		console.log(svg);
+		const excerpt = svg.indexOf('<g');
+		vscode.window.showInformationMessage(`${svg.substring(excerpt, excerpt + 100)}...
+
+See the console for the complete SVG output.`);
 	});
 
 	context.subscriptions.push(disposable);
